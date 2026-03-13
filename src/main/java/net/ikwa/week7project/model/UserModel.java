@@ -12,15 +12,16 @@ public class UserModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Name is required")
+    @NotBlank(message = "Name is required") // 🔧 Validation handled automatically
     private String name;
 
     @Email(message = "Invalid email")
+    @NotBlank(message = "Email is required")
     @Column(unique = true)
     private String email;
 
     @NotBlank(message = "Role is required")
-    private String role; // STUDENT, TEACHER, ADMIN
+    private String role;
 
     public UserModel() {}
 

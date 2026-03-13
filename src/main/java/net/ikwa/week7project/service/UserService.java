@@ -18,23 +18,12 @@ public class UserService {
     // CREATE
     public UserModel createUser(UserModel user) {
 
-        if(user.getName() == null || user.getName().isBlank()){
-            throw new RuntimeException("Name is required");
-        }
-
-        if(user.getEmail() == null || user.getEmail().isBlank()){
-            throw new RuntimeException("Email is required");
-        }
-
-        if(user.getRole() == null || user.getRole().isBlank()){
-            throw new RuntimeException("Role is required");
-        }
-
         return userRepo.save(user);
     }
 
     // GET ALL
     public List<UserModel> getAllUsers() {
+
         return userRepo.findAll();
     }
 
@@ -42,7 +31,8 @@ public class UserService {
     public UserModel getUserById(Long id) {
 
         return userRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() ->
+                        new RuntimeException("User not found with id: " + id));
     }
 
     // UPDATE
@@ -72,5 +62,4 @@ public class UserService {
 
         userRepo.delete(user);
     }
-
 }

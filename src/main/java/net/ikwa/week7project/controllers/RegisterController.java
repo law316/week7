@@ -3,13 +3,15 @@ package net.ikwa.week7project.controllers;
 import net.ikwa.week7project.model.UserModel;
 import net.ikwa.week7project.service.UserService;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users") // 🔧 API VERSIONING ADDED
 public class RegisterController {
 
     private final UserService userService;
@@ -18,69 +20,52 @@ public class RegisterController {
         this.userService = userService;
     }
 
-    // 1 CREATE USER
+    // 1️⃣ CREATE USER
     @PostMapping
-    public ResponseEntity<?> registerUser(@RequestBody UserModel user) {
+    public ResponseEntity<UserModel> registerUser(@Valid @RequestBody UserModel user) {
 
-        try{
-            UserModel saved = userService.createUser(user);
-            return ResponseEntity.ok(saved);
+        UserModel saved = userService.createUser(user);
 
-        }catch(Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity
+                .status(201) // 🔧 Proper REST status code
+                .body(saved);
     }
 
-    // 2 GET ALL USERS
+    // 2️⃣ GET ALL USERS
     @GetMapping
-    public ResponseEntity<?> getUsers(){
+    public ResponseEntity<List<UserModel>> getUsers(){
 
-        try{
-            List<UserModel> users = userService.getAllUsers();
-            return ResponseEntity.ok(users);
+        List<UserModel> users = userService.getAllUsers();
 
-        }catch(Exception e){
-            return ResponseEntity.internalServerError().body(e.getMessage());
-        }
+        return ResponseEntity.ok(users);
     }
 
-    // 3 GET USER BY ID
+    // 3️⃣ GET USER BY ID
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUser(@PathVariable Long id){
+    public ResponseEntity<UserModel> getUser(@PathVariable Long id){
 
-        try{
-            UserModel user = userService.getUserById(id);
-            return ResponseEntity.ok(user);
+        UserModel user = userService.getUserById(id);
 
-        }catch(Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.ok(user);
     }
 
-    // 4 UPDATE USER
+    // 4️⃣ UPDATE USER
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id,
-                                        @RequestBody UserModel user){
+    public ResponseEntity<UserModel> updateUser(
+            @PathVariable Long id,
+            @Valid @RequestBody UserModel user){
 
-        try{
-            UserModel updated = userService.updateUser(id, user);
-            return ResponseEntity.ok(updated);
+        UserModel updated = userService.updateUser(id, user);
 
-        }catch(Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.ok(updated);
     }
 
-    // 5 DELETE USER
+    // 5️⃣ DELETE USER
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Long id){
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id){
 
-        try{
-            userService.deleteUser(id);
-            return ResponseEntity.ok("User deleted successfully");
+        userService.deleteUser(id);
 
-        }catch(Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        return ResponseEntity.noContent().build(); // 🔧 Correct delete response
     }
 }
